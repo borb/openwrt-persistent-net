@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# we need these things, otherwise it's pointless running
+[ ! -r /lib/functions/persistent-net.sh -o ! -x /usr/sbin/ip -o ! -r /etc/persistent-net-map ] && exit 0
+
+. /lib/functions/persistent-net.sh
+
+# check for 'add' event
+[ "$ACTION" = "add" -a "$HOTPLUG_TYPE" = "net" -a ! -z "$DEVICENAME" ] && {
+	_ifrename $DEVICENAME
+}

@@ -1,0 +1,24 @@
+#!/bin/sh /etc/rc.common
+# Deal with device renaming, for static linked drivers
+
+START=19
+
+start() {
+	# we need these things, otherwise it's pointless running
+	[ ! -r /lib/functions/persistent-net.sh -o ! -x /usr/sbin/ip -o ! -r /etc/persistent-net-map ] && exit 0
+
+	. /lib/functions/persistent-net.sh
+
+	# iterate through available interfaces and run
+	for i in $(ls /sys/class/net/); do
+		_devname=$(basename $i)
+		case "$_devname" in
+			# ignore loopback and bridge interfaces
+			lo|br*)	;;
+
+			# everything else
+			*)	_ifrename $_devname
+				;;
+		esac
+	done
+}
